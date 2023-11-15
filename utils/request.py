@@ -21,6 +21,8 @@
 import requests
 import pandas as pd
 import numpy as np
+import json
+
 
 # Load data from file to send as an API POST request.
 # We prepare a DataFrame with the public test set + riders data
@@ -51,6 +53,16 @@ api_response = requests.post(url, json=feature_vector_json)
 print("Received POST response:")
 print("*"*50)
 print(f"API prediction result: {api_response.json()[0]}")
+print(f"API response content: {api_response.text}")
 print(f"The response took: {api_response.elapsed.total_seconds()} seconds")
 print("*"*50)
-print(f"API response content: {api_response.text}")
+# Check if the response is empty
+if not api_response.text:
+    print("API response is empty.")
+else:
+    try:
+        # Try to parse the JSON response
+        result = api_response.json()
+        print(f"API prediction result: {result[0]}")
+    except json.decoder.JSONDecodeError:
+        print("Error decoding JSON. Check API response format.")
