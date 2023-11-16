@@ -22,6 +22,7 @@
 """
 
 # Helper Dependencies
+import re
 import numpy as np
 import pandas as pd
 import pickle
@@ -70,14 +71,6 @@ def _preprocess_data(data):
                                         'Valencia_wind_deg', 'Valencia_humidity', 'Valencia_pressure',
                                         'Bilbao_wind_speed', 'Bilbao_wind_deg', 'Bilbao_clouds_all',
                                         'Bilbao_pressure']]
-    # Extract numeric part from 'Seville_pressure'
-    feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
-        lambda x: int(re.search(r'\d+', str(x)).group()) if re.search(r'\d+', str(x)) else None
-    )
-
-    # Convert 'Seville_pressure' to int32
-    feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].astype('Int32')
-
     # Impute NaN values with the median
     feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
 
