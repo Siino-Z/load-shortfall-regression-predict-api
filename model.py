@@ -74,6 +74,13 @@ def _preprocess_data(data):
     # Impute NaN values with the median
     feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
 
+    # Handle non-numeric values and convert to int32
+    for column in feature_vector_df.columns:
+        # Use regular expression to extract numeric values
+        feature_vector_df[column] = feature_vector_df[column].apply(
+            lambda x: int(re.search(r'\d+', str(x)).group()) if re.search(r'\d+', str(x)) else None
+        )
+
     predict_vector = feature_vector_df.copy()
     # ------------------------------------------------------------------------
 
