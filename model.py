@@ -63,69 +63,25 @@ def _preprocess_data(data):
 
     # ----------- Replace this code with your own preprocessing steps --------
     
-    # Convert 'time' column to datetime
-    feature_vector_df['time'] = pd.to_datetime(feature_vector_df['time'])
+    feature_vector_df = feature_vector_df[['Year', 'Month', 'Day', 'Hour', 'Madrid_wind_speed',
+                                        'Madrid_clouds_all', 'Madrid_pressure', 'Seville_humidity',
+                                        'Seville_clouds_all', 'Seville_wind_speed', 'Barcelona_wind_speed',
+                                        'Barcelona_wind_deg', 'Barcelona_pressure', 'Valencia_wind_speed',
+                                        'Valencia_wind_deg', 'Valencia_humidity', 'Valencia_pressure',
+                                        'Bilbao_wind_speed', 'Bilbao_wind_deg', 'Bilbao_clouds_all',
+                                        'Bilbao_pressure']]
+    # Extract numeric part from 'Seville_pressure'
+    feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
+        lambda x: int(re.search(r'\d+', str(x)).group()) if re.search(r'\d+', str(x)) else None
+    )
 
-    # Extract date and time features
-    feature_vector_df['Day'] = feature_vector_df['time'].dt.day
-    feature_vector_df['Month'] = feature_vector_df['time'].dt.month
-    feature_vector_df['Year'] = feature_vector_df['time'].dt.year
-    feature_vector_df['Hour'] = feature_vector_df['time'].dt.hour
-    
-    # Select specific columns
-    feature_vector_df = feature_vector_df[['Year', 'Month', 'Day', 'Hour', 'Madrid_wind_speed', 'Madrid_humidity',
-                                           'Madrid_clouds_all', 'Madrid_pressure', 'Madrid_rain_1h', 'Madrid_temp',
-                                           'Seville_humidity', 'Seville_clouds_all', 'Seville_wind_speed',
-                                           'Seville_pressure', 'Seville_rain_1h', 'Seville_rain_3h', 'Seville_temp',
-                                           'Barcelona_wind_speed', 'Barcelona_wind_deg', 'Barcelona_rain_1h',
-                                           'Barcelona_pressure', 'Barcelona_rain_3h', 'Barcelona_temp',
-                                           'Valencia_wind_speed', 'Valencia_wind_deg', 'Valencia_humidity',
-                                           'Valencia_snow_3h', 'Valencia_pressure', 'Valencia_temp', 'Bilbao_wind_speed',
-                                           'Bilbao_wind_deg', 'Bilbao_clouds_all', 'Bilbao_pressure', 'Bilbao_rain_1h',
-                                           'Bilbao_snow_3h', 'Bilbao_temp']]
-    
-    feature_vector_df = data.copy()
+    # Convert 'Seville_pressure' to int32
+    feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].astype('Int32')
 
-    # Ensure DataFrame exists and is loaded with data
-    if 'feature_vector_df' not in globals():
-        print("Error: DataFrame 'feature_vector_df' not found.")
-    else:
-        # Handle Seville_pressure column
-        feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
-            lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
-        )
-        # Handle Valencia_wind_deg column
-        feature_vector_df['Valencia_wind_deg'] = feature_vector_df['Valencia_wind_deg'].apply(
-            lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
-        )
-            
-    # Check if columns exist in DataFrame
-    if 'Seville_pressure' not in feature_vector_df.columns or 'Valencia_wind_deg' not in feature_vector_df.columns:
-        print("Error: One or both of the columns not found in the DataFrame.")
-    else:
-    # Impute NaN values with median
-        feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
-    
-     # Winsorize to handle outliers
-    for column in feature_vector_df.columns:
-        winsorized_data = winsorize(feature_vector_df[column], limits=(0.05, 0.05))
-        feature_vector_df[column] = winsorized_data
-    
-    # Feature selection using VarianceThreshold
-    sel = VarianceThreshold(threshold=0.1)
-    feature_vector_df = feature_vector_df[feature_vector_df.columns[sel.get_support(indices=True)]]
-    
-    # Add constant for intercept in statsmodels
-    feature_vector_df = sm.add_constant(feature_vector_df)
-    
-    # Calculate VIF and exclude high VIF columns
-    vif_data = pd.DataFrame()
-    vif_data['Variable'] = feature_vector_df.columns
-    vif_data['VIF'] = [variance_inflation_factor(feature_vector_df.values, i) for i in range(feature_vector_df.shape[1])]
-    columns_to_exclude = vif_data[vif_data['VIF'] > 5]['Variable']
-    feature_vector_df = feature_vector_df.drop(columns_to_exclude, axis=1)
+    # Impute NaN values with the median
+    feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
 
-    predict_vector = feature_vector_df
+    predict_vector = feature_vector_df.copy()
     # ------------------------------------------------------------------------
 
     return predict_vector
