@@ -88,12 +88,11 @@ def _preprocess_data(data):
 
     # Handle Seville_pressure column
     feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
-        lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)'), errors='coerce') if pd.notna(s).all() else np.nan
+    lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
     )
-
     # Handle Valencia_wind_deg column
     feature_vector_df['Valencia_wind_deg'] = feature_vector_df['Valencia_wind_deg'].apply(
-        lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)'), errors='coerce') if pd.notna(s).all() else np.nan
+    lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
     )
     # Impute NaN values with median
     feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
