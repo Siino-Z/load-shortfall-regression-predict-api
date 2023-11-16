@@ -84,10 +84,17 @@ def _preprocess_data(data):
                                            'Bilbao_wind_deg', 'Bilbao_clouds_all', 'Bilbao_pressure', 'Bilbao_rain_1h',
                                            'Bilbao_snow_3h', 'Bilbao_temp']]
     
-    # Handle object-type values by extracting numbers and converting to float
-    for column in feature_vector_df.select_dtypes(include=['object']).columns:
-        feature_vector_df[column] = pd.to_numeric(feature_vector_df[column], errors='coerce')
+    feature_vector_df = data.copy()
 
+    # Handle Seville_pressure column
+    feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
+        lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)'), errors='coerce') if pd.notna(s).all() else np.nan
+    )
+
+    # Handle Valencia_wind_deg column
+    feature_vector_df['Valencia_wind_deg'] = feature_vector_df['Valencia_wind_deg'].apply(
+        lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)'), errors='coerce') if pd.notna(s).all() else np.nan
+    )
     # Impute NaN values with median
     feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
 
