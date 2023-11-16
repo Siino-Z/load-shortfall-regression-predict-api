@@ -86,8 +86,9 @@ def _preprocess_data(data):
     
     # Handle object-type values by extracting numbers and converting to float
     for column in feature_vector_df.select_dtypes(include=['object']).columns:
-        feature_vector_df[column] = feature_vector_df[column].str.extract('(\d+\.\d+|\d+)').astype(int)
-    
+        feature_vector_df[column] = pd.to_numeric(feature_vector_df[column].str.extract('(\d+\.\d+|\d+)'), errors='coerce')
+
+
     # Impute NaN values with median
     feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
 
