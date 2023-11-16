@@ -86,18 +86,26 @@ def _preprocess_data(data):
     
     feature_vector_df = data.copy()
 
-    # Handle Seville_pressure column
-    feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
-    lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
-    )
-    # Handle Valencia_wind_deg column
-    feature_vector_df['Valencia_wind_deg'] = feature_vector_df['Valencia_wind_deg'].apply(
-    lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
-    )
+    # Ensure DataFrame exists and is loaded with data
+    if 'feature_vector_df' not in globals():
+        print("Error: DataFrame 'feature_vector_df' not found.")
+    else:
+        # Handle Seville_pressure column
+        feature_vector_df['Seville_pressure'] = feature_vector_df['Seville_pressure'].apply(
+            lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
+        )
+        # Handle Valencia_wind_deg column
+        feature_vector_df['Valencia_wind_deg'] = feature_vector_df['Valencia_wind_deg'].apply(
+            lambda s: pd.to_numeric(s.str.extract('(\d+\.\d+|\d+)', expand=False), errors='coerce') if pd.notna(s) else np.nan
+        )
+            
+    # Check if columns exist in DataFrame
+    if 'Seville_pressure' not in feature_vector_df.columns or 'Valencia_wind_deg' not in feature_vector_df.columns:
+        print("Error: One or both of the columns not found in the DataFrame.")
+    else:
     # Impute NaN values with median
-    feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
-
-
+        feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
+    
      # Winsorize to handle outliers
     for column in feature_vector_df.columns:
         winsorized_data = winsorize(feature_vector_df[column], limits=(0.05, 0.05))
