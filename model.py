@@ -60,9 +60,8 @@ def _preprocess_data(data):
     # ---------------------------------------------------------------
 
     # ----------- Replace this code with your own preprocessing steps --------
-    train_df = feature_vector_df.copy()  # Make a copy to avoid modifying the original DataFrame
-    # Drop specified columns
-    train_df = train_df.drop(['Unnamed: 0', 'Seville_pressure', 'Valencia_wind_deg', 'load_shortfall_3h'], axis=1)
+    train_df = feature_vector_df.copy()  
+    # Make a copy to avoid modifying the original DataFrame
     train_copy_df = train_df.copy(deep=True)
 
     # Replace the null values in Valencia_pressure with Madrid_pressure values on the same row.
