@@ -27,10 +27,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import json
-from scipy.stats.mstats import winsorize
-from sklearn.feature_selection import VarianceThreshold
-import statsmodels.api as sm
-from statsmodels.stats.outliers_influence import variance_inflation_factor
+
 
 def _preprocess_data(data):
     """Private helper function to preprocess data for model prediction.
