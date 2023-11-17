@@ -70,16 +70,6 @@ def _preprocess_data(data):
     
     # Impute null values in Valencia_pressure with the column's median
     train_copy_df['Valencia_pressure'].fillna(train_copy_df['Valencia_pressure'].median(), inplace=True)
-    # Convert Valencia_wind_deg values from object-type to Int
-    train_copy_df['Valencia_wind_deg'] = train_copy_df['Valencia_wind_deg'].astype(str).str.extract('(\d+)', expand=False).astype(int)
-    
-    
-    # Create time-related features from the 'time' column
-    train_copy_df['time'] = pd.to_datetime(train_copy_df['time'])
-    train_copy_df['Day'] = train_copy_df['time'].dt.day
-    train_copy_df['Month'] = train_copy_df['time'].dt.month
-    train_copy_df['Year'] = train_copy_df['time'].dt.year
-    train_copy_df['Hour'] = train_copy_df['time'].dt.hour
     
     # Define the training dataset
     feature_vector_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
@@ -89,7 +79,7 @@ def _preprocess_data(data):
        'Seville_weather_id', 'Seville_temp', 'Barcelona_wind_speed',
        'Barcelona_wind_deg', 'Barcelona_rain_1h', 'Barcelona_pressure',
        'Barcelona_rain_3h', 'Barcelona_weather_id', 'Barcelona_temp',
-       'Valencia_wind_speed', 'Valencia_wind_deg', 'Valencia_humidity',
+       'Valencia_wind_speed', 'Valencia_humidity',
        'Valencia_snow_3h', 'Valencia_pressure', 'Valencia_temp',
        'Bilbao_wind_speed', 'Bilbao_wind_deg', 'Bilbao_clouds_all',
        'Bilbao_pressure', 'Bilbao_rain_1h', 'Bilbao_snow_3h',
@@ -140,9 +130,17 @@ def make_prediction(data, model):
         A 1-D python list containing the model prediction.
 
     """
+    print("Model Type:", type(model))
+    print("Model Contents:", model)
+    
     # Data preprocessing.
     prep_data = _preprocess_data(data)
     # Perform prediction with model and preprocessed data.
     prediction = model.predict(prep_data)
+
+    # Print or log the type and contents of the prediction.
+    print("Prediction Type:", type(prediction))
+    print("Prediction Contents:", prediction)
+
     # Format as list for output standardisation.
     return prediction[0].tolist()

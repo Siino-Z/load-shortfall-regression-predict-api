@@ -34,6 +34,11 @@ test = pd.read_csv('./data/df_test.csv')
 # This step is necessary in order to transmit our data via HTTP/S
 feature_vector_json = test.iloc[1].to_json()
 
+# Print the generated JSON payload
+print("Generated JSON payload:")
+print(feature_vector_json)
+print("*" * 50)
+
 # Specify the URL at which the API will be hosted.
 # NOTE: When testing your instance of the API on a remote machine
 # replace the URL below with its public IP:
