@@ -22,7 +22,7 @@
 """
 
 # Helper Dependencies
-import re
+
 import numpy as np
 import pandas as pd
 import pickle
@@ -73,8 +73,6 @@ def _preprocess_data(data):
     # Convert Valencia_wind_deg values from object-type to Int
     train_copy_df['Valencia_wind_deg'] = train_copy_df['Valencia_wind_deg'].astype(str).str.extract('(\d+)', expand=False).astype(int)
     
-    # Convert Seville_pressure values from object-type to Int
-    train_copy_df['Seville_pressure'] = train_copy_df['Seville_pressure'].astype(str).str.extract('(\d+)', expand=False).astype(int)
     
     # Create time-related features from the 'time' column
     train_copy_df['time'] = pd.to_datetime(train_copy_df['time'])
@@ -87,7 +85,7 @@ def _preprocess_data(data):
     feature_vector_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
        'Madrid_pressure', 'Madrid_rain_1h', 'Madrid_weather_id', 'Madrid_temp',
        'Seville_humidity', 'Seville_clouds_all', 'Seville_wind_speed',
-       'Seville_pressure', 'Seville_rain_1h', 'Seville_rain_3h',
+        'Seville_rain_1h', 'Seville_rain_3h',
        'Seville_weather_id', 'Seville_temp', 'Barcelona_wind_speed',
        'Barcelona_wind_deg', 'Barcelona_rain_1h', 'Barcelona_pressure',
        'Barcelona_rain_3h', 'Barcelona_weather_id', 'Barcelona_temp',
