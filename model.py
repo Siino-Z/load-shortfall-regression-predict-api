@@ -67,22 +67,24 @@ def _preprocess_data(data):
     train_df = train_df.drop(['Unnamed: 0'], axis=1)
     # create copy of train_df
     train_copy_df = train_df.copy(deep = True)
+    
     # Impute null values in Valencia_pressure with the column's median
     train_copy_df['Valencia_pressure'].fillna(train_copy_df['Valencia_pressure'].median(), inplace=True)
     # Convert Valencia_wind_deg values from object-type to Int
     train_copy_df['Valencia_wind_deg'] = train_copy_df['Valencia_wind_deg'].astype(str).str.extract('(\d+)', expand=False).astype(int)
+    
     # Convert Seville_pressure values from object-type to Int
     train_copy_df['Seville_pressure'] = train_copy_df['Seville_pressure'].astype(str).str.extract('(\d+)', expand=False).astype(int)
+    
     # Create time-related features from the 'time' column
     train_copy_df['time'] = pd.to_datetime(train_copy_df['time'])
-
     train_copy_df['Day'] = train_copy_df['time'].dt.day
     train_copy_df['Month'] = train_copy_df['time'].dt.month
     train_copy_df['Year'] = train_copy_df['time'].dt.year
     train_copy_df['Hour'] = train_copy_df['time'].dt.hour
     
     # Define the training dataset
-    feature_vector_df = train_copy_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
+    feature_vector_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
        'Madrid_pressure', 'Madrid_rain_1h', 'Madrid_weather_id', 'Madrid_temp',
        'Seville_humidity', 'Seville_clouds_all', 'Seville_wind_speed',
        'Seville_pressure', 'Seville_rain_1h', 'Seville_rain_3h',
