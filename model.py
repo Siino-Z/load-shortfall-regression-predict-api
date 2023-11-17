@@ -63,24 +63,39 @@ def _preprocess_data(data):
     # ---------------------------------------------------------------
 
     # ----------- Replace this code with your own preprocessing steps --------
+    train_df = feature_vector_df
+    train_df = train_df.drop(['Unnamed: 0'], axis=1)
+    # create copy of train_df
+    train_copy_df = train_df.copy(deep = True)
+    # Impute null values in Valencia_pressure with the column's median
+    train_copy_df['Valencia_pressure'].fillna(train_copy_df['Valencia_pressure'].median(), inplace=True)
+    # Convert Valencia_wind_deg values from object-type to Int
+    train_copy_df['Valencia_wind_deg'] = train_copy_df['Valencia_wind_deg'].astype(str).str.extract('(\d+)', expand=False).astype(int)
+    # Convert Seville_pressure values from object-type to Int
+    train_copy_df['Seville_pressure'] = train_copy_df['Seville_pressure'].astype(str).str.extract('(\d+)', expand=False).astype(int)
+    # Create time-related features from the 'time' column
+    train_copy_df['time'] = pd.to_datetime(train_copy_df['time'])
+
+    train_copy_df['Day'] = train_copy_df['time'].dt.day
+    train_copy_df['Month'] = train_copy_df['time'].dt.month
+    train_copy_df['Year'] = train_copy_df['time'].dt.year
+    train_copy_df['Hour'] = train_copy_df['time'].dt.hour
     
-    feature_vector_df = feature_vector_df[['Year', 'Month', 'Day', 'Hour', 'Madrid_wind_speed',
-                                        'Madrid_clouds_all', 'Madrid_pressure', 'Seville_humidity',
-                                        'Seville_clouds_all', 'Seville_wind_speed', 'Barcelona_wind_speed',
-                                        'Barcelona_wind_deg', 'Barcelona_pressure', 'Valencia_wind_speed',
-                                        'Valencia_wind_deg', 'Valencia_humidity', 'Valencia_pressure',
-                                        'Bilbao_wind_speed', 'Bilbao_wind_deg', 'Bilbao_clouds_all',
-                                        'Bilbao_pressure']]
-    # Impute NaN values with the median
-    feature_vector_df.fillna(feature_vector_df.median(), inplace=True)
-
-    # Handle non-numeric values and convert to int32
-    for column in feature_vector_df.columns:
-        # Use regular expression to extract numeric values
-        feature_vector_df[column] = feature_vector_df[column].apply(
-            lambda x: int(re.search(r'\d+', str(x)).group()) if re.search(r'\d+', str(x)) else None
-        )
-
+    # Define the training dataset
+    feature_vector_df = train_copy_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
+       'Madrid_pressure', 'Madrid_rain_1h', 'Madrid_weather_id', 'Madrid_temp',
+       'Seville_humidity', 'Seville_clouds_all', 'Seville_wind_speed',
+       'Seville_pressure', 'Seville_rain_1h', 'Seville_rain_3h',
+       'Seville_weather_id', 'Seville_temp', 'Barcelona_wind_speed',
+       'Barcelona_wind_deg', 'Barcelona_rain_1h', 'Barcelona_pressure',
+       'Barcelona_rain_3h', 'Barcelona_weather_id', 'Barcelona_temp',
+       'Valencia_wind_speed', 'Valencia_wind_deg', 'Valencia_humidity',
+       'Valencia_snow_3h', 'Valencia_pressure', 'Valencia_temp',
+       'Bilbao_wind_speed', 'Bilbao_wind_deg', 'Bilbao_clouds_all',
+       'Bilbao_pressure', 'Bilbao_rain_1h', 'Bilbao_snow_3h',
+       'Bilbao_weather_id', 'Bilbao_temp']]
+    
+    
     predict_vector = feature_vector_df.copy()
     # ------------------------------------------------------------------------
 
