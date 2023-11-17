@@ -60,31 +60,17 @@ def _preprocess_data(data):
     # ---------------------------------------------------------------
 
     # ----------- Replace this code with your own preprocessing steps --------
-    train_df = feature_vector_df
-    train_df = train_df.drop(['Unnamed: 0'], axis=1)
-    # create copy of train_df
-    train_copy_df = train_df.copy(deep = True)
-    
-    #Replace the null values in Valencia_pressure with Madrid_pressure values on the same row.
-    train_copy_df.loc[train_copy_df['Valencia_pressure'].isna(),'Valencia_pressure'] = \
-    train_copy_df.loc[train_copy_df['Valencia_pressure'].isna(), 'Madrid_pressure']
-    
-    # Define the training dataset
-    feature_vector_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
-       'Madrid_pressure', 'Madrid_rain_1h', 'Madrid_weather_id', 'Madrid_temp',
-       'Seville_humidity', 'Seville_clouds_all', 'Seville_wind_speed',
-        'Seville_rain_1h', 'Seville_rain_3h',
-       'Seville_weather_id', 'Seville_temp', 'Barcelona_wind_speed',
-       'Barcelona_wind_deg', 'Barcelona_rain_1h', 'Barcelona_pressure',
-       'Barcelona_rain_3h', 'Barcelona_weather_id', 'Barcelona_temp',
-       'Valencia_wind_speed', 'Valencia_humidity',
-       'Valencia_snow_3h', 'Valencia_pressure', 'Valencia_temp',
-       'Bilbao_wind_speed', 'Bilbao_wind_deg', 'Bilbao_clouds_all',
-       'Bilbao_pressure', 'Bilbao_rain_1h', 'Bilbao_snow_3h',
-       'Bilbao_weather_id', 'Bilbao_temp']]
-    
-    
-    predict_vector = feature_vector_df
+    train_df = feature_vector_df.copy()  # Make a copy to avoid modifying the original DataFrame
+    # Drop specified columns
+    train_df = train_df.drop(['Unnamed: 0', 'Seville_pressure', 'Valencia_wind_deg'], axis=1)
+    train_copy_df = train_df.copy(deep=True)
+
+    # Replace the null values in Valencia_pressure with Madrid_pressure values on the same row.
+    train_copy_df['Valencia_pressure'].fillna(train_copy_df['Madrid_pressure'], inplace=True)
+
+
+
+    predict_vector = train_copy_df  # Use train_copy_df for predict_vector
     # ------------------------------------------------------------------------
 
     return predict_vector
