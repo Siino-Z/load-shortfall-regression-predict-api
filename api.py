@@ -29,7 +29,7 @@ app = Flask(__name__)
 
 # Load our model into memory.
 # Please update this path to reflect your own trained model.
-static_model = load_model(path_to_model='assets/trained-models/gb_model.pkl')
+static_model = load_model(path_to_model='assets/trained-models/gb2_model.pkl')
 
 # Ensure the model is loaded successfully before starting the application
 if static_model is not None:
