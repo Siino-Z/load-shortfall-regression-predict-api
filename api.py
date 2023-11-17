@@ -47,37 +47,17 @@ else:
 
 @app.route('/api_v0.1', methods=['POST'])
 def model_prediction():
-    """
-    Endpoint for making predictions using the pre-trained model.
-
-    Expected JSON Payload:
-    {
-        "feature1": value1,
-        "feature2": value2,
-        ...
-    }
-
-    Returns:
-    {
-        "prediction": model_output
-    }
-    """
-    try:
-        # Retrieve the data payload of the POST request
-        data = request.get_json(silent=True)
-
-        if data is None:
-            return jsonify({"error": "Invalid JSON payload"}), 400
-
-        # Preprocess the data and use the pretrained model to make a prediction
-        output = make_prediction(data, static_model)
-
-        # Package the prediction as a JSON object to deliver a valid response
-        return jsonify({"prediction": output})
-    except Exception as e:
-        # Log the exception for debugging
-        print(f"Error during prediction: {str(e)}")
-        return jsonify({"error": "An unexpected error occurred"}), 500
+    
+    # We retrieve the data payload of the POST request
+    data = request.get_json(force=True)
+    
+    # We then preprocess our data, and use our pretrained model to make a
+    # prediction.
+    output = make_prediction(data, static_model)
+    
+    # We finally package this prediction as a JSON object to deliver a valid
+    # response with our API.
+    return jsonify(output)
 
 # ... (existing server configuration)
 
