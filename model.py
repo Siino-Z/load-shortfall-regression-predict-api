@@ -68,8 +68,9 @@ def _preprocess_data(data):
     # create copy of train_df
     train_copy_df = train_df.copy(deep = True)
     
-    # Impute null values in Valencia_pressure with the column's median
-    train_copy_df['Valencia_pressure'].fillna(train_copy_df['Valencia_pressure'].median(), inplace=True)
+    #Replace the null values in Valencia_pressure with Madrid_pressure values on the same row.
+    train_copy_df.loc[train_copy_df['Valencia_pressure'].isna(),'Valencia_pressure'] = \
+    train_copy_df.loc[train_copy_df['Valencia_pressure'].isna(), 'Madrid_pressure']
     
     # Define the training dataset
     feature_vector_df = train_copy_df [['Year','Month','Day','Hour','Madrid_wind_speed', 'Madrid_humidity', 'Madrid_clouds_all',
@@ -86,7 +87,7 @@ def _preprocess_data(data):
        'Bilbao_weather_id', 'Bilbao_temp']]
     
     
-    predict_vector = feature_vector_df.copy()
+    predict_vector = feature_vector_df
     # ------------------------------------------------------------------------
 
     return predict_vector
